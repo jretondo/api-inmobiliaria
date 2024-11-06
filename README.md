@@ -16,8 +16,8 @@ Asegúrate de tener instalados los siguientes programas en tu máquina:
 Primero, clona este repositorio en tu máquina local:
 
 ```
-git clone https://github.com/tu-usuario/tu-repositorio.git
-cd tu-repositorio
+git clone https://github.com/jretondo/api-inmobiliaria.git
+cd api-inmobiliaria
 ```
 
 ### 2. Instalar dependencias
