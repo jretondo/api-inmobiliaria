@@ -1,45 +1,109 @@
-import Propiedad from '../../../models/propiedades';
+const { PROPIEDAD } = require('../../models/propiedades');
+const { creator, updater, deleter, findAll } = require('../../utils/crud');
 
-export const createPropiedad = async (propiedad) => {
-  const { codigo, tipo, direccion, precio, descripcion, estado, agenteId } =
-    propiedad;
-  const nuevaPropiedad = Propiedad.create({
-    codigo,
-    tipo,
+exports.createPropiedad = async (propiedad) => {
+  try {
+    const nuevaPropiedad = await creator(PROPIEDAD, propiedad);
+    return nuevaPropiedad;
+  } catch (error) {
+    return {
+      error: true,
+      status: 500,
+      message: 'Error al crear la propiedad',
+      body: { error: error.message },
+    };
+  }
+};
+
+exports.updatePropiedad = async (propiedad, id) => {
+  try {
+    const updatedPropiedad = await updater(PROPIEDAD, propiedad, id);
+    return updatedPropiedad;
+  } catch (error) {
+    return {
+      error: true,
+      status: 500,
+      message: 'Error al actualizar la propiedad',
+      body: { error: error.message },
+    };
+  }
+};
+
+exports.deletePropiedad = async (id) => {
+  try {
+    const deletedPropiedad = await deleter(PROPIEDAD, id);
+    return deletedPropiedad;
+  } catch (error) {
+    return {
+      error: true,
+      status: 500,
+      message: 'Error al eliminar la propiedad',
+      body: { error: error.message },
+    };
+  }
+};
+
+exports.getPropiedades = async (filters) => {
+  const {
+    page,
+    pageSize,
+    orderBy,
+    asc,
+    precioDesde,
+    precioHasta,
     direccion,
-    precio,
-    descripcion,
+    tipo,
     estado,
     agenteId,
-  });
-  return Propiedad.findOne({
-    where: { propiedadId: (await nuevaPropiedad).dataValues.propiedadId },
-  });
-};
+  } = filters;
+  let where = [];
+  if (precioDesde) {
+    where.push(`precio >= ${precioDesde}`);
+  }
+  if (precioHasta) {
+    where.push(`precio <= ${precioHasta}`);
+  }
+  if (direccion) {
+    where.push(`direccion LIKE '%${direccion}%'`);
+  }
+  if (tipo) {
+    where.push(`tipo = '${tipo}'`);
+  }
+  if (estado) {
+    where.push(`estado = '${estado}'`);
+  }
+  if (agenteId) {
+    where.push(`agenteId = ${agenteId}`);
+  }
 
-export const updatePropiedad = async (propiedadId, propiedad) => {
-  const { codigo, tipo, direccion, precio, descripcion, estado } = propiedad;
-  await Propiedad.update(
-    { codigo, tipo, direccion, precio, descripcion, estado },
-    { where: { propiedadId } },
+  const Propiedades = await findAll(
+    PROPIEDAD.tableName,
+    [Object.values(PROPIEDAD.columns)],
+    where,
+    page,
+    pageSize,
+    orderBy,
+    asc,
   );
-  return Propiedad.findOne({ where: { propiedadId } });
+  return Propiedades;
 };
 
-export const deletePropiedad = async (propiedadId) => {
-  return Propiedad.destroy({ where: { propiedadId } });
-};
-
-export const getPropiedades = async (filters) => {
-  const { page, pageSize, tipo, estado } = filters;
-  const offset = (page - 1) * pageSize;
-  const limit = pageSize;
-  const where = {};
-  if (tipo) where.tipo = tipo;
-  if (estado) where.estado = estado;
-  return Propiedad.findAndCountAll({ where, limit, offset });
-};
-
-export const getPropiedadById = async (propiedadId) => {
-  return Propiedad.findOne({ where: { propiedadId } });
+exports.getPropiedadById = async (id) => {
+  const Propiedad = await findAll(
+    PROPIEDAD.tableName,
+    [Object.values(PROPIEDAD.columns)],
+    [`propiedadId = ${id}`],
+  );
+  if (Propiedad.body.total === 0) {
+    return {
+      error: true,
+      status: 404,
+      message: `Propiedad con id: ${id} no encontrada`,
+      body: {},
+    };
+  }
+  return {
+    ...Propiedad,
+    body: Propiedad.body.rows[0],
+  };
 };

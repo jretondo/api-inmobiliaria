@@ -1,5 +1,6 @@
 const express = require('express');
 const connection = require('./src/config/database');
+const propiedadRouter = require('./src/api/propiedad/routes');
 const app = express();
 
 app.use(express.json());
@@ -9,8 +10,10 @@ connection.connect((err) => {
     console.error('Error al conectar a la base de datos:', err);
     process.exit(1);
   }
-  console.log('Conectado a la base de datos MariaDB');
+  console.log('Conectado a la base de datos MySQL');
 });
+
+app.use('/api/propiedades', propiedadRouter);
 
 app.use((err, req, res, next) => {
   console.error('Error interno:', err);

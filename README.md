@@ -55,7 +55,7 @@ DB_PORT=
 ### 4. Crear las tablas en la base de datos:
 
 ```
-npm run db:createTables
+npm run migrate
 ```
 
 ### 5. Iniciar API:
@@ -69,7 +69,7 @@ La API debería estar corriendo ahora en http://localhost:3000
 ## Comandos Útiles
 
 - **npm run dev**: Ejecuta la API en modo de desarrollo (con hot-reloading).
-- **npm run db:createTables**: Crea las tablas en la base de datos.
+- **npm run migrate**: Crea las tablas en la base de datos.
 - **npm run start**: Inicia la API en producción.
 - **npm run test**: Ejecuta los tests definidos para la API.
 

@@ -1,6 +1,6 @@
 const connection = require('../../config/database');
 const { IMAGEN } = require('../imagen');
-const { PROPIEDADES } = require('../propiedades');
+const { PROPIEDAD } = require('../propiedades');
 
 const PROPIEDAD_IMAGEN = {
   tablename: 'PropiedadImagen',
@@ -18,7 +18,7 @@ const createPropiedadImagenTable = async () => {
       ${columns.propiedadImagenId} INT AUTO_INCREMENT PRIMARY KEY,
       ${columns.propiedadId} INT NOT NULL,
       ${columns.imagenId} INT NOT NULL,
-      FOREIGN KEY (${columns.propiedadId}) REFERENCES ${PROPIEDADES.tableName}(${PROPIEDADES.columns.propiedadId}) ON DELETE CASCADE,
+      FOREIGN KEY (${columns.propiedadId}) REFERENCES ${PROPIEDAD.tableName}(${PROPIEDAD.columns.propiedadId}) ON DELETE CASCADE,
       FOREIGN KEY (${columns.imagenId}) REFERENCES ${IMAGEN.tableName}(${IMAGEN.columns.imagenId}) ON DELETE CASCADE
     );
   `;

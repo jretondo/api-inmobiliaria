@@ -1,12 +1,12 @@
 const connection = require('../../config/database');
-const { PROPIEDADES } = require('.');
+const { PROPIEDAD } = require('.');
 const { AGENTE } = require('../agente');
 
 const createPropiedadesRelationships = async () => {
   const agentePropiedadRel = `
-    ALTER TABLE ${PROPIEDADES.tableName} 
+    ALTER TABLE ${PROPIEDAD.tableName} 
     ADD CONSTRAINT fk_propiedad_agente
-    FOREIGN KEY (${PROPIEDADES.columns.agenteId}) REFERENCES ${AGENTE.tableName}(${AGENTE.columns.agenteId})
+    FOREIGN KEY (${PROPIEDAD.columns.agenteId}) REFERENCES ${AGENTE.tableName}(${AGENTE.columns.agenteId})
     ON DELETE SET NULL
     ON UPDATE CASCADE;
   `;

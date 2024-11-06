@@ -1,7 +1,7 @@
 const connection = require('../../config/database');
 
-const PROPIEDADES = {
-  tableName: 'Propiedades',
+const PROPIEDAD = {
+  tableName: 'Propiedad',
   columns: {
     propiedadId: 'propiedadId',
     codigo: 'codigo',
@@ -15,9 +15,9 @@ const PROPIEDADES = {
 };
 
 const createPropiedadesTable = async () => {
-  const columns = PROPIEDADES.columns;
+  const columns = PROPIEDAD.columns;
   const query = `
-    CREATE TABLE IF NOT EXISTS ${PROPIEDADES.tableName} (
+    CREATE TABLE IF NOT EXISTS ${PROPIEDAD.tableName} (
       ${columns.propiedadId} INT AUTO_INCREMENT PRIMARY KEY,
       ${columns.codigo} VARCHAR(50) NOT NULL UNIQUE,
       ${columns.tipo} ENUM('venta', 'alquiler') NOT NULL,
@@ -40,4 +40,4 @@ const createPropiedadesTable = async () => {
   });
 };
 
-module.exports = { createPropiedadesTable, PROPIEDADES };
+module.exports = { createPropiedadesTable, PROPIEDAD };

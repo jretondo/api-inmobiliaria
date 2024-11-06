@@ -6,10 +6,7 @@ const {
   createClienteRelationships,
 } = require('../models/cliente/associations');
 const { createImagenTable } = require('../models/imagen');
-const {
-  createPropiedadesTable,
-  PROPIEDADES,
-} = require('../models/propiedades');
+const { createPropiedadesTable, PROPIEDAD } = require('../models/propiedades');
 const {
   createPropiedadesRelationships,
 } = require('../models/propiedades/associations');
@@ -29,8 +26,8 @@ const createTablesAssociations = async () => {
     await createPropiedadImagenTable();
 
     await createUpdateTrigger(
-      PROPIEDADES.tableName,
-      PROPIEDADES.tableName + 'update',
+      PROPIEDAD.tableName,
+      PROPIEDAD.tableName + 'update',
     );
     await createUpdateTrigger(AGENTE.tableName, AGENTE.tableName + 'update');
     await createUpdateTrigger(CLIENTE.tableName, CLIENTE.tableName + 'update');
