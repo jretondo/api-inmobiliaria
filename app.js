@@ -1,6 +1,9 @@
 const express = require('express');
 const connection = require('./src/config/database');
 const propiedadRouter = require('./src/api/propiedad/routes');
+const clienteRouter = require('./src/api/cliente/routes');
+const agenteRouter = require('./src/api/agente/routes');
+const { publicFolders } = require('./src/utils/constants');
 const app = express();
 
 app.use(express.json());
@@ -14,6 +17,9 @@ connection.connect((err) => {
 });
 
 app.use('/api/propiedades', propiedadRouter);
+app.use('/api/clientes', clienteRouter);
+app.use('/api/agentes', agenteRouter);
+app.use('/public', express.static(publicFolders.uploads));
 
 app.use((err, req, res, next) => {
   console.error('Error interno:', err);

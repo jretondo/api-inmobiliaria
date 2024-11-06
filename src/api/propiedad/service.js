@@ -1,6 +1,8 @@
 const { PROPIEDAD } = require('../../models/propiedades');
 const { creator, updater, deleter, findAll } = require('../../utils/crud');
 
+const columns = PROPIEDAD.columns;
+
 exports.createPropiedad = async (propiedad) => {
   try {
     const nuevaPropiedad = await creator(PROPIEDAD, propiedad);
@@ -56,24 +58,26 @@ exports.getPropiedades = async (filters) => {
     estado,
     agenteId,
   } = filters;
+
   let where = [];
+
   if (precioDesde) {
-    where.push(`precio >= ${precioDesde}`);
+    where.push(`${columns.precio} >= ${precioDesde}`);
   }
   if (precioHasta) {
-    where.push(`precio <= ${precioHasta}`);
+    where.push(`${columns.precio} <= ${precioHasta}`);
   }
   if (direccion) {
-    where.push(`direccion LIKE '%${direccion}%'`);
+    where.push(`${columns.direccion} LIKE '%${direccion}%'`);
   }
   if (tipo) {
-    where.push(`tipo = '${tipo}'`);
+    where.push(`${columns.tipo} = '${tipo}'`);
   }
   if (estado) {
-    where.push(`estado = '${estado}'`);
+    where.push(`${columns.estado} = '${estado}'`);
   }
   if (agenteId) {
-    where.push(`agenteId = ${agenteId}`);
+    where.push(`${columns.agenteId} = ${agenteId}`);
   }
 
   const Propiedades = await findAll(
@@ -92,7 +96,7 @@ exports.getPropiedadById = async (id) => {
   const Propiedad = await findAll(
     PROPIEDAD.tableName,
     [Object.values(PROPIEDAD.columns)],
-    [`propiedadId = ${id}`],
+    [`${columns.propiedadId} = ${id}`],
   );
   if (Propiedad.body.total === 0) {
     return {

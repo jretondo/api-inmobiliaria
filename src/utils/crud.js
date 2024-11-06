@@ -35,6 +35,43 @@ exports.creator = async (model, data) => {
   });
 };
 
+exports.bulkCreator = async (model, data) => {
+  const { tableName } = model;
+  const columnNames = Object.keys(data[0]);
+  const values = data.map((row) => Object.values(row));
+  const query = `
+      INSERT INTO ${tableName} (${columnNames.join(', ')}) 
+      VALUES ${values
+        .map(() => `(${columnNames.map(() => '?').join(', ')})`)
+        .join(', ')};
+    `;
+
+  return new Promise((resolve, reject) => {
+    connection.query(query, values.flat(), (err, results) => {
+      try {
+        if (err) {
+          console.error(`Error al crear la ${tableName}`, err.message);
+          resolve({
+            error: true,
+            status: 400,
+            message: `Error al crear la ${tableName}`,
+            body: { err },
+          });
+        }
+        resolve({
+          error: false,
+          status: 201,
+          message: `${tableName} creada con éxito`,
+          body: { results },
+        });
+      } catch (error) {
+        console.error(error);
+        reject(error);
+      }
+    });
+  });
+};
+
 exports.updater = async (model, data, id) => {
   const { tableName, columns } = model;
   const columnNames = Object.keys(data);
