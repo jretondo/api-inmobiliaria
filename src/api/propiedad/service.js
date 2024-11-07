@@ -1,11 +1,27 @@
+const { IMAGEN } = require('../../models/imagen');
 const { PROPIEDAD } = require('../../models/propiedades');
-const { creator, updater, deleter, findAll } = require('../../utils/crud');
+const { PROPIEDAD_IMAGEN } = require('../../models/propiedadImagen');
+const {
+  creator,
+  updater,
+  deleter,
+  findAll,
+  bulkCreator,
+} = require('../../utils/crud');
 
 const columns = PROPIEDAD.columns;
 
-exports.createPropiedad = async (propiedad) => {
+exports.createPropiedad = async (propiedad, imagenesId) => {
   try {
     const nuevaPropiedad = await creator(PROPIEDAD, propiedad);
+    if (imagenesId) {
+      const propiedadImagenes = imagenesId.map((imagenId) => ({
+        propiedadId: nuevaPropiedad.body.insertId[0],
+        imagenId,
+      }));
+      await this.createPropiedadImagenes(propiedadImagenes);
+      nuevaPropiedad.body.imagenes = propiedadImagenes;
+    }
     return nuevaPropiedad;
   } catch (error) {
     return {
@@ -17,9 +33,19 @@ exports.createPropiedad = async (propiedad) => {
   }
 };
 
-exports.updatePropiedad = async (propiedad, id) => {
+exports.updatePropiedad = async (propiedad, id, imagenesId) => {
+  console.log('imagenesId :>> ', imagenesId);
   try {
     const updatedPropiedad = await updater(PROPIEDAD, propiedad, id);
+    if (imagenesId) {
+      await this.deletePropiedadImagenes(id);
+      const propiedadImagenes = imagenesId.map((imagenId) => ({
+        propiedadId: id,
+        imagenId,
+      }));
+      await this.createPropiedadImagenes(propiedadImagenes);
+      updatedPropiedad.body.imagenes = propiedadImagenes;
+    }
     return updatedPropiedad;
   } catch (error) {
     return {
@@ -34,6 +60,7 @@ exports.updatePropiedad = async (propiedad, id) => {
 exports.deletePropiedad = async (id) => {
   try {
     const deletedPropiedad = await deleter(PROPIEDAD, id);
+    await this.deletePropiedadImagenes(id);
     return deletedPropiedad;
   } catch (error) {
     return {
@@ -89,7 +116,20 @@ exports.getPropiedades = async (filters) => {
     orderBy,
     asc,
   );
-  return Propiedades;
+  const rows = new Promise(async (resolve) => {
+    const items = await Promise.all(
+      Propiedades.body.rows.map(async (propiedad) => {
+        const imagenes = await this.getImagenes(propiedad.propiedadId);
+        return { ...propiedad, imagenes };
+      }),
+    );
+    resolve(items);
+  });
+
+  return {
+    ...Propiedades,
+    body: { ...Propiedades.body, rows: await rows },
+  };
 };
 
 exports.getPropiedadById = async (id) => {
@@ -106,8 +146,73 @@ exports.getPropiedadById = async (id) => {
       body: {},
     };
   }
+  const rows = new Promise(async (resolve) => {
+    const items = await Promise.all(
+      Propiedad.body.rows.map(async (propiedad) => {
+        const imagenes = await this.getImagenes(propiedad.propiedadId);
+        return { ...propiedad, imagenes };
+      }),
+    );
+    resolve(items);
+  });
+
+  const items = await rows;
   return {
     ...Propiedad,
-    body: Propiedad.body.rows[0],
+    body: items[0],
   };
+};
+
+exports.createPropiedadImagenes = async (propiedadImagenes) => {
+  try {
+    return await bulkCreator(PROPIEDAD_IMAGEN, propiedadImagenes);
+  } catch (error) {
+    return {
+      error: true,
+      status: 500,
+      message: 'Error al crear la imagen',
+      body: { error: error.message },
+    };
+  }
+};
+
+exports.deletePropiedadImagenes = async (propiedadId) => {
+  try {
+    const imagenes = await this.getImagenes(propiedadId);
+    let deletedImagen = [];
+    imagenes.forEach(async (imagen) => {
+      const url = imagen.body.url;
+      const filePath = path.join(__dirname, '..', '..', '..', url);
+      fs.unlinkSync(filePath);
+      deletedImagen.push(await deleter(PROPIEDAD_IMAGEN, imagen.imagenId));
+    });
+    return deletedImagen;
+  } catch (error) {
+    return {
+      error: true,
+      status: 500,
+      message: 'Error al eliminar la imagen',
+      body: { error: error.message },
+    };
+  }
+};
+
+exports.getImagenes = async (propiedadId) => {
+  const columns = PROPIEDAD_IMAGEN.columns;
+  const propiedadImagenes = await findAll(
+    PROPIEDAD_IMAGEN.tableName,
+    [Object.values(PROPIEDAD_IMAGEN.columns)],
+    [`${columns.propiedadId} = ${propiedadId}`],
+  );
+  const imagenes = await Promise.all(
+    propiedadImagenes.body.rows.map(async (propiedadImagen) => {
+      const imagen = await findAll(
+        IMAGEN.tableName,
+        [Object.values(IMAGEN.columns)],
+        [`${IMAGEN.columns.imagenId} = ${propiedadImagen.imagenId}`],
+      );
+      return { ...imagen.body.rows[0], imagenId: propiedadImagen.imagenId };
+    }),
+  );
+  return imagenes;
 };

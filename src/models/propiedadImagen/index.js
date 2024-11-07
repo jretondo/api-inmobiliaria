@@ -3,7 +3,7 @@ const { IMAGEN } = require('../imagen');
 const { PROPIEDAD } = require('../propiedades');
 
 const PROPIEDAD_IMAGEN = {
-  tablename: 'PropiedadImagen',
+  tableName: 'PropiedadImagen',
   columns: {
     propiedadImagenId: 'propiedadImagenId',
     propiedadId: 'propiedadId',

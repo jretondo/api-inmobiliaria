@@ -1,4 +1,5 @@
 const { AGENTE } = require('../../models/agente');
+const { IMAGEN } = require('../../models/imagen');
 const { creator, updater, deleter, findAll } = require('../../utils/crud');
 
 const columns = AGENTE.columns;
@@ -66,12 +67,22 @@ exports.getAgentes = async (filters) => {
 
   const Agentes = await findAll(
     AGENTE.tableName,
-    [Object.values(AGENTE.columns)],
+    [
+      Object.values(AGENTE.columns).map(
+        (column) => `${AGENTE.tableName}.${column}`,
+      ),
+      Object.values(IMAGEN.columns).map(
+        (column) => `${IMAGEN.tableName}.${column}`,
+      ),
+    ],
     where,
     page,
     pageSize,
     orderBy,
     asc,
+    IMAGEN.tableName,
+    IMAGEN.columns.imagenId,
+    'LEFT JOIN',
   );
   return Agentes;
 };
@@ -79,8 +90,22 @@ exports.getAgentes = async (filters) => {
 exports.getAgenteById = async (id) => {
   const Agente = await findAll(
     AGENTE.tableName,
-    [Object.values(AGENTE.columns)],
+    [
+      Object.values(AGENTE.columns).map(
+        (column) => `${AGENTE.tableName}.${column}`,
+      ),
+      Object.values(IMAGEN.columns).map(
+        (column) => `${IMAGEN.tableName}.${column}`,
+      ),
+    ],
     [`${columns.agenteId} = ${id}`],
+    1,
+    1,
+    null,
+    null,
+    IMAGEN.tableName,
+    IMAGEN.columns.imagenId,
+    'LEFT JOIN',
   );
   if (Agente.body.total === 0) {
     return {

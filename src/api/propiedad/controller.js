@@ -9,9 +9,7 @@ const {
 } = require('./service');
 
 exports.CreatePropiedadController = async (req, res) => {
-  const { codigo, tipo, direccion, precio, descripcion, estado, agenteId } =
-    req.body;
-  const Propiedad = await createPropiedad({
+  const {
     codigo,
     tipo,
     direccion,
@@ -19,13 +17,34 @@ exports.CreatePropiedadController = async (req, res) => {
     descripcion,
     estado,
     agenteId,
-  });
+    imagenesId,
+  } = req.body;
+  const Propiedad = await createPropiedad(
+    {
+      codigo,
+      tipo,
+      direccion,
+      precio,
+      descripcion,
+      estado,
+      agenteId,
+    },
+    imagenesId,
+  );
   return jsonResponse(res, Propiedad.status, Propiedad.message, Propiedad.body);
 };
 
 exports.UpdatePropiedadController = async (req, res) => {
-  const { codigo, tipo, direccion, precio, descripcion, estado, agenteId } =
-    req.body;
+  const {
+    codigo,
+    tipo,
+    direccion,
+    precio,
+    descripcion,
+    estado,
+    agenteId,
+    imagenesId,
+  } = req.body;
   const { propiedadId } = req.params;
   const Propiedad = await updatePropiedad(
     jsonCleaner({
@@ -38,6 +57,7 @@ exports.UpdatePropiedadController = async (req, res) => {
       agenteId,
     }),
     parseInt(propiedadId),
+    imagenesId,
   );
   return jsonResponse(res, Propiedad.status, Propiedad.message, Propiedad.body);
 };

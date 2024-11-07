@@ -21,7 +21,7 @@ exports.creator = async (model, data) => {
             body: { err },
           });
         }
-        const insertId = nuevoImagen.body.results.insertId;
+        const insertId = results.insertId;
         resolve({
           error: false,
           status: 201,
@@ -196,7 +196,11 @@ exports.findAll = async (
   const query = `
         SELECT ${columns.map((column) => column).join(', ')}
         FROM ${tableName}
-        ${joinType ? `${joinType} ${tableNameJoin} ON ${columnJoin}` : ''}
+        ${
+          joinType
+            ? `${joinType} ${tableNameJoin} ON ${tableName}.${columnJoin} = ${tableNameJoin}.${columnJoin}`
+            : ''
+        }
         ${
           filters.length > 0
             ? `WHERE ${filters.map((filter) => `${filter}`).join(' AND ')}`
@@ -209,7 +213,11 @@ exports.findAll = async (
   const count = `
         SELECT COUNT(*) as total
         FROM ${tableName}
-        ${joinType ? `${joinType} ${tableNameJoin} ON ${columnJoin}` : ''}
+        ${
+          joinType
+            ? `${joinType} ${tableNameJoin} ON ${tableName}.${columnJoin} = ${tableNameJoin}.${columnJoin}`
+            : ''
+        }
         ${
           filters.length > 0
             ? `WHERE ${filters.map((filter) => `${filter}`).join(' AND ')}`
