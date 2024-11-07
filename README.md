@@ -45,11 +45,22 @@ CREATE DATABASE inmobiliaria;
 #### 3.2. Configurar el archivo .env:
 
 ```
+# Datos para la BD:
 DB_HOST=
 DB_USER=
 DB_PASSWORD=
 DB_NAME=
 DB_PORT=
+
+# Datos para el ususario de pruebas:
+ADMIN_USER=
+ADMIN_PASSWORD=
+ADMIN_NOMBRE=
+ADMIN_APELLIDO=
+ADMIN_EMAIL=
+
+# Llave secreta para la generación del Token
+SECRET_KEY=
 ```
 
 ### 4. Crear las tablas en la base de datos:
@@ -57,6 +68,8 @@ DB_PORT=
 ```
 npm run migrate
 ```
+
+Esta acción también crea un usuario Administrador de pruebas. No olvide de completar el .env para ello
 
 ### 5. Iniciar API:
 

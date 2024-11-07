@@ -6,12 +6,13 @@ const {
   GetPropiedadesController,
   GetPropiedadByIdController,
 } = require('./controller');
+const { checkAuthToken } = require('../../utils/checkToken');
 const router = express.Router();
 
 router
-  .post('/', CreatePropiedadController)
-  .put('/:propiedadId', UpdatePropiedadController)
-  .delete('/:propiedadId', DeletePropiedadController)
+  .post('/', checkAuthToken, CreatePropiedadController)
+  .put('/:propiedadId', checkAuthToken, UpdatePropiedadController)
+  .delete('/:propiedadId', checkAuthToken, DeletePropiedadController)
   .get('/:propiedadId', GetPropiedadByIdController)
   .get('/', GetPropiedadesController);
 

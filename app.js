@@ -4,6 +4,7 @@ const propiedadRouter = require('./src/api/propiedad/routes');
 const clienteRouter = require('./src/api/cliente/routes');
 const agenteRouter = require('./src/api/agente/routes');
 const imagenRouter = require('./src/api/imagen/routes');
+const adminRouter = require('./src/api/admin/routes');
 const { publicFolders } = require('./src/utils/constants');
 const app = express();
 
@@ -17,6 +18,7 @@ connection.connect((err) => {
   console.log('Conectado a la base de datos MySQL');
 });
 
+app.use('/api/admin', adminRouter);
 app.use('/api/propiedades', propiedadRouter);
 app.use('/api/clientes', clienteRouter);
 app.use('/api/agentes', agenteRouter);

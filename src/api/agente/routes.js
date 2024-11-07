@@ -6,13 +6,14 @@ const {
   GetAgenteByIdController,
   GetAgentesController,
 } = require('./controller');
+const { checkAuthToken } = require('../../utils/checkToken');
 const router = express.Router();
 
 router
-  .post('/', CreateAgenteController)
-  .put('/:agenteId', UpdateAgenteController)
-  .delete('/:agenteId', DeleteAgenteController)
-  .get('/:agenteId', GetAgenteByIdController)
-  .get('/', GetAgentesController);
+  .post('/', checkAuthToken, CreateAgenteController)
+  .put('/:agenteId', checkAuthToken, UpdateAgenteController)
+  .delete('/:agenteId', checkAuthToken, DeleteAgenteController)
+  .get('/:agenteId', checkAuthToken, GetAgenteByIdController)
+  .get('/', checkAuthToken, GetAgentesController);
 
 module.exports = router;
