@@ -8,6 +8,7 @@ const uploadFile = (folderDest, fields) => {
       if (!req.body.filesName) {
         req.body.filesName = [];
       }
+
       const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
       req.body.filesName.push({
         nombre: file.fieldname,

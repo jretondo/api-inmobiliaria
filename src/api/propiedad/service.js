@@ -8,13 +8,14 @@ const {
   findAll,
   bulkCreator,
 } = require('../../utils/crud');
+const { deleteImagen } = require('../imagen/service');
 
 const columns = PROPIEDAD.columns;
 
 exports.createPropiedad = async (propiedad, imagenesId) => {
   try {
     const nuevaPropiedad = await creator(PROPIEDAD, propiedad);
-    if (imagenesId) {
+    if (!nuevaPropiedad.error && imagenesId) {
       const propiedadImagenes = imagenesId.map((imagenId) => ({
         propiedadId: nuevaPropiedad.body.insertId[0],
         imagenId,
@@ -34,12 +35,27 @@ exports.createPropiedad = async (propiedad, imagenesId) => {
 };
 
 exports.updatePropiedad = async (propiedad, id, imagenesId) => {
-  console.log('imagenesId :>> ', imagenesId);
   try {
-    const updatedPropiedad = await updater(PROPIEDAD, propiedad, id);
+    const updatedPropiedad =
+      Object.keys(propiedad).length > 0
+        ? await updater(PROPIEDAD, propiedad, id)
+        : { error: false, status: 200, message: '', body: {} };
     if (imagenesId) {
-      await this.deletePropiedadImagenes(id);
-      const propiedadImagenes = imagenesId.map((imagenId) => ({
+      const imagenesPrevias = await this.getImagenes(id);
+      const imegenesToDelete = imagenesPrevias.filter(
+        (imagen) => !imagenesId.includes(imagen.imagenId),
+      );
+      await Promise.all(
+        imegenesToDelete.map(async (imagen) => {
+          await deleteImagen(imagen.imagenId);
+        }),
+      );
+
+      const newImagenes = imagenesId.filter((imagenId) => {
+        return !imagenesPrevias.some((imagen) => imagen.imagenId === imagenId);
+      });
+
+      const propiedadImagenes = newImagenes.map((imagenId) => ({
         propiedadId: id,
         imagenId,
       }));
