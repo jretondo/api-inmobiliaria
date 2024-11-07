@@ -48,63 +48,40 @@
     </nav>
 
     <div class="container mt-5">
-      <h3 class="mb-4">Listado de Propiedades</h3>
+      <h3 class="mb-4">Listado de Agentes</h3>
       <div class="row mb-3">
         <div class="col-md-3">
-          <label for="precioDesde">Precio Desde</label>
-          <input type="number" class="form-control" id="precioDesde" placeholder="Precio mínimo">
-        </div>
+          <label for="nombre">Nombre</label>
+          <input type="text" class="form-control" id="nombre" placeholder="Nombre">
+        </div>       
         <div class="col-md-3">
-          <label for="precioHasta">Precio Hasta</label>
-          <input type="number" class="form-control" id="precioHasta" placeholder="Precio máximo">
-        </div>
+          <label for="telefono">Teléfono</label>
+          <input type="text" class="form-control" id="telefono" placeholder="telefono">
+        </div>      
         <div class="col-md-6">
           <label for="direccion">Dirección</label>
           <input type="text" class="form-control" id="direccion" placeholder="Dirección">
         </div>       
-      </div>
-      <div class="row mb-3">       
-        <div class="col-md-3">
-          <label for="tipo">Tipo</label>
-          <select type="select" class="form-control" id="tipo" >
-              <option value="">Todos</option>
-              <option value="venta">Venta</option>
-              <option value="alquiler">Alquiler</option>
-          </select>
-        </div>
-        <div class="col-md-3">
-          <label for="estado">Estado</label>
-          <select class="form-control" id="estado">
-            <option value="">Todos</option>
-            <option value="disponible">Disponible</option>
-            <option value="vendido">Vendido</option>
-            <option value="reservado">Reservado</option>
-          </select>
-        </div>
-        <div class="col-md-6">
-          <label for="agente">Agentes</label><br />
-          <select class="form-control" id="agente" multiple>
-          </select>
-        </div>       
-      </div>
+      </div>     
       <div class="row mb-3">
         <div class="col-md-12">
-          <button class="btn btn-primary" onclick="filtrarPropiedades()">Filtrar</button>
+          <button class="btn btn-primary" onclick="filtrarAgentes()">Filtrar</button>
           <button class="btn btn-secondary" onclick="limpiarFiltros()">Limpiar Filtros</button>
         </div>
       </div>
       <table class="table table-bordered">
         <thead>
           <tr>
-            <th>Código</th>
+            <th></th>
+            <th>Nombre</th>
+            <th>Apellido</th>
+            <th>Email</th>
+            <th>Telefono</th>
             <th>Dirección</th>
-            <th>Precio</th>
-            <th>Tipo</th>
-            <th>Estado</th>
             <th>Acciones</th>
           </tr>
         </thead>
-        <tbody id="propiedadesTable">
+        <tbody id="clientesTable">
         </tbody>
       </table>
 
@@ -115,8 +92,8 @@
 
       <div class="row mb-5">
         <div class="col-12">
-          <button class="btn btn-success" onclick="nuevaPropiedad()">
-            Nueva Propiedad
+          <button class="btn btn-success" onclick="nuevoAgente()">
+            Nuevo Agente
           </button>
         </div>
     </div>

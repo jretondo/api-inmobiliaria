@@ -24,6 +24,17 @@
       <div class="collapse navbar-collapse" id="navbarNav">
         <ul class="navbar-nav ml-auto">
           <li class="nav-item">
+            <a class="nav-link" href="/public/admin/propiedades/"
+              >Propiedades</a
+            >
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/public/admin/clientes/">Clientes</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/public/admin/agentes/">Agentes</a>
+          </li>
+          <li class="nav-item ml-5">
             <button class="btn btn-danger" onclick="logout()">
               Cerrar sesión
             </button>
@@ -32,19 +43,19 @@
       </div>
     </nav>
 
-    <div class="container mt-5">
+    <div class="container mt-5 mb-4">
       <h3>Detalles de Propiedad</h3>
       <form id="detallePropiedadForm">
         <div class="form-group">
           <label for="codigo">Código</label>
-          <input type="text" class="form-control" id="codigo" disabled />
+          <input type="text" class="form-control" id="codigo"  />
         </div>
         <div class="form-group">
           <label for="direccion">Dirección</label>
           <input type="text" class="form-control" id="direccion" />
         </div>
         <div class="form-group">
-          <label for="precio">Precio</label>
+          <label for="precio">Precio en dolares</label>
           <input type="number" class="form-control" id="precio" />
         </div>
         <div class="form-group">
@@ -63,6 +74,10 @@
           </select>
         </div>
         <div class="form-group">
+          <label for="agente">Agente</label>
+          <select class="form-control" id="agente"></select>
+        </div>
+        <div class="form-group">
           <label>Imágenes Actuales</label>
           <div id="imagenes" class="d-flex flex-wrap"></div>
         </div>
@@ -72,10 +87,22 @@
             type="file"
             class="form-control"
             id="nuevasImagenes"
+            accept="image/*"
             multiple
           />
+          <div id="previewNuevasImagenes" class="d-flex flex-wrap mt-3"></div>
         </div>
+        <div class="row">
+          <div class="col-md-6">
         <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+        <button type="button" class="btn btn-secondary" onclick="volver()">
+          Volver
+        </button>
+      </div>
+      <div class="col-md-6 text-right">
+        <button type="button" class="btn btn-danger" onclick="eliminarPropiedad()">
+          Eliminar Propiedad
+        </button>
       </form>
     </div>
     <script src="../app.js"></script>

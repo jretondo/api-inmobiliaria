@@ -1,4 +1,4 @@
-let propiedadId = null;
+let agenteId = null;
 let imagenesActuales = [];
 let nuevasImagenes = [];
 let imagenesBorradas = [];
@@ -7,43 +7,40 @@ async function loadProperties(
   filters = {
     page: 1,
     pageSize: 10,
-    orderBy: 'propiedadId',
+    orderBy: 'agenteId',
     asc: true,
-    agenteId: null,
+    nombre: null,
+    telefono: null,
     direccion: null,
-    precioDesde: null,
-    precioHasta: null,
-    tipo: null,
-    estado: null,
   },
 ) {
-  const {
-    page,
-    pageSize,
-    orderBy,
-    asc,
-    agenteId,
-    direccion,
-    precioDesde,
-    precioHasta,
-    tipo,
-    estado,
-  } = filters;
-  const query = `page=${page}&pageSize=${pageSize}&orderBy=${orderBy}&asc=${asc}&agenteId=${agenteId}&direccion=${direccion}&precioDesde=${precioDesde}&precioHasta=${precioHasta}&tipo=${tipo}&estado=${estado}`;
-  const res = await fetch(`${API_URL}/propiedades?${query}`);
+  const { page, pageSize, orderBy, asc, nombre, telefono, direccion } = filters;
+  const query = `page=${page}&pageSize=${pageSize}&orderBy=${orderBy}&asc=${asc}&nombre=${nombre}&telefono=${telefono}&direccion=${direccion}`;
+  const res = await fetch(`${API_URL}/agentes?${query}`, {
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem('token')}`,
+    },
+  });
   const data = await res.json();
 
-  const propertiesTable = document.getElementById('propiedadesTable');
+  const propertiesTable = document.getElementById('clientesTable');
   propertiesTable.innerHTML = data.body.rows
     .map(
       (prop) => `
         <tr>
-            <td>${prop.codigo}</td>
+            <td>${
+              prop.url
+                ? `<img src="${GENERAL_URL}/${prop.url}" style="width: 100px; height: 100px;border-radius: 50%">`
+                : ''
+            }</td>
+            <td>${prop.nombre}</td>
+            <td>${prop.apellido}</td>
+            <td>${prop.email}</td>
+            <td>${prop.telefono}</td>
             <td>${prop.direccion}</td>
-            <td>${prop.precio}</td>
-            <td>${prop.tipo}</td>
-            <td>${prop.estado}</td>
-            <td><a href="detalle.html?id=${prop.propiedadId}" class="btn btn-info btn-sm">Ver Detalles</a></td>
+            <td><a href="detalle.html?id=${
+              prop.agenteId
+            }" class="btn btn-info btn-sm">Ver Detalles</a></td>
         </tr>
     `,
     )
@@ -55,16 +52,13 @@ async function loadProperties(
     (_, i) => `
         <li class="page-item ${i + 1 === page ? 'active' : ''}">
             <a class="page-link" href="#" onclick="loadProperties({
-              page: ${i + 1},
-              pageSize: ${pageSize},
-              orderBy: '${orderBy}',
-              asc: ${asc},
-              agenteId: ${agenteId},
-              direccion: '${direccion}',
-              precioDesde: ${precioDesde},
-              precioHasta: ${precioHasta},
-              tipo: '${tipo}',
-              estado: '${estado}',
+            page: ${i + 1},
+            pageSize: ${pageSize},
+            orderBy: '${orderBy}',
+            asc: ${asc},
+            nombre: '${nombre}',
+            telefono: '${telefono}',
+            direccion: '${direccion}',
             })">${i + 1}</a>
         </li>
     `,
@@ -79,22 +73,26 @@ function getAgentesMultiple() {
 }
 
 async function loadPropertyDetails(id) {
-  const res = await fetch(`${API_URL}/propiedades/${id}`);
+  const res = await fetch(`${API_URL}/agentes/${id}`, {
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem('token')}`,
+    },
+  });
   const { body: prop } = await res.json();
 
-  document.getElementById('codigo').value = prop.codigo;
+  document.getElementById('nombre').value = prop.nombre;
+  document.getElementById('apellido').value = prop.apellido;
+  document.getElementById('email').value = prop.email;
+  document.getElementById('telefono').value = prop.telefono;
   document.getElementById('direccion').value = prop.direccion;
-  document.getElementById('precio').value = prop.precio;
-  document.getElementById('tipo').value = prop.tipo;
-  document.getElementById('estado').value = prop.estado;
-  document.getElementById('agente').value = prop.agenteId;
 
-  imagenesActuales = prop.imagenes;
+  imagenesActuales = [{ imagenId: prop.imagenId, url: prop.url }];
   if (imagenesBorradas.length > 0) {
     imagenesActuales = imagenesActuales.filter(
       (img) => !imagenesBorradas.includes(img.imagenId),
     );
   }
+
   const imagenesDiv = document.getElementById('imagenes');
   imagenesDiv.innerHTML = imagenesActuales
     .map(
@@ -109,15 +107,15 @@ async function loadPropertyDetails(id) {
 }
 
 document
-  .getElementById('nuevaPropiedadForm')
+  .getElementById('nuevaAgenteForm')
   ?.addEventListener('submit', async (e) => {
     e.preventDefault();
     let imagenesNuevasId = [];
     if (nuevasImagenes.length > 0) {
       const formData = new FormData();
-      nuevasImagenes.forEach((img) => formData.append('propiedad', img));
+      nuevasImagenes.forEach((img) => formData.append('avatar', img));
 
-      const imgRes = await fetch(`${API_URL}/imagenes/propiedad`, {
+      const imgRes = await fetch(`${API_URL}/imagenes/avatar`, {
         method: 'POST',
         body: formData,
         headers: { Authorization: `Baerer ${localStorage.getItem('token')}` },
@@ -128,31 +126,38 @@ document
       imagenesNuevasId = imagenesSubidas;
     }
 
-    const nuevaPropiedad = {
-      codigo: document.getElementById('codigo').value,
+    const nuevoAgente = {
+      nombre: document.getElementById('nombre').value,
+      apellido: document.getElementById('apellido').value,
+      email: document.getElementById('email').value,
+      telefono: document.getElementById('telefono').value,
       direccion: document.getElementById('direccion').value,
-      precio: document.getElementById('precio').value,
-      tipo: document.getElementById('tipo').value,
-      estado: document.getElementById('estado').value,
-      agenteId: document.getElementById('agente').value,
-      imagenesId: imagenesNuevasId,
+      imagenId: imagenesNuevasId[0],
     };
 
-    await fetch(`${API_URL}/propiedades`, {
+    await fetch(`${API_URL}/agentes`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Baerer ${localStorage.getItem('token')}`,
       },
-      body: JSON.stringify(nuevaPropiedad),
+      body: JSON.stringify(nuevoAgente),
     });
-    alert('Propiedad agregada correctamente');
-    window.location.href = '/public/admin/propiedades/';
+    alert('Agente agregada correctamente');
+    window.location.href = '/public/admin/agentes/';
   });
 
 function eliminarImagen(imagenId) {
   imagenesBorradas.push(imagenId);
-  loadPropertyDetails(propiedadId);
+  loadPropertyDetails(agenteId);
+}
+
+function hideFileInput() {
+  document.getElementById('nuevasImagenes').style.display = 'none';
+}
+
+function showFileInput() {
+  document.getElementById('nuevasImagenes').style.display = 'block';
 }
 
 document
@@ -163,6 +168,9 @@ document
       nuevasImagenes.push(file);
     });
     mostrarPreviewNuevasImagenes();
+    if (nuevasSeleccionadas.length > 0) {
+      hideFileInput();
+    }
   });
 
 function mostrarPreviewNuevasImagenes() {
@@ -206,6 +214,7 @@ function mostrarPreviewNuevasImagenes() {
 function eliminarImagenNueva(index) {
   nuevasImagenes.splice(index, 1);
   mostrarPreviewNuevasImagenes();
+  showFileInput();
 }
 
 document
@@ -215,15 +224,15 @@ document
   });
 
 document
-  .getElementById('detallePropiedadForm')
+  .getElementById('detalleAgenteForm')
   ?.addEventListener('submit', async (e) => {
     e.preventDefault();
     let imagenesNuevasId = [];
     if (nuevasImagenes.length > 0) {
       const formData = new FormData();
-      nuevasImagenes.forEach((img) => formData.append('propiedad', img));
+      nuevasImagenes.forEach((img) => formData.append('avatar', img));
 
-      const imgRes = await fetch(`${API_URL}/imagenes/propiedad`, {
+      const imgRes = await fetch(`${API_URL}/imagenes/avatar`, {
         method: 'POST',
         body: formData,
         headers: { Authorization: `Baerer ${localStorage.getItem('token')}` },
@@ -239,123 +248,78 @@ document
       ...imagenesNuevasId,
     ];
 
-    const propiedadActualizada = {
-      codigo: document.getElementById('codigo').value,
+    const clienteActualizada = {
+      nombre: document.getElementById('nombre').value,
+      apellido: document.getElementById('apellido').value,
+      email: document.getElementById('email').value,
+      telefono: document.getElementById('telefono').value,
       direccion: document.getElementById('direccion').value,
-      precio: document.getElementById('precio').value,
-      tipo: document.getElementById('tipo').value,
-      estado: document.getElementById('estado').value,
-      agenteId: document.getElementById('agente').value,
-      imagenesId,
+      imagenId: imagenesId[0],
     };
 
-    await fetch(`${API_URL}/propiedades/${propiedadId}`, {
+    await fetch(`${API_URL}/agentes/${agenteId}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Baerer ${localStorage.getItem('token')}`,
       },
-      body: JSON.stringify(propiedadActualizada),
+      body: JSON.stringify(clienteActualizada),
     });
 
-    alert('Propiedad actualizada correctamente');
-    window.location.href = '/public/admin/propiedades/';
+    alert('Agente actualizada correctamente');
+    window.location.href = '/public/admin/agentes/';
   });
 
-async function getAgentes() {
-  fetch(`${API_URL}/agentes`, {
-    headers: {
-      Authorization: `Bearer ${localStorage.getItem('token')}`,
-    },
-  })
-    .then((res) => res.json())
-    .then((data) => {
-      const agentesSelect = document.getElementById('agente');
-      agentesSelect.innerHTML += data.body.rows
-        .map(
-          (agente) => `
-              <option value="${agente.agenteId}">${agente.nombre} ${agente.apellido}</option>
-          `,
-        )
-        .join('');
-    });
-}
-
-async function eliminarPropiedad() {
-  if (confirm('¿Está seguro que desea eliminar esta propiedad?')) {
-    await fetch(`${API_URL}/propiedades/${propiedadId}`, {
+async function eliminarAgente() {
+  if (confirm('¿Está seguro que desea eliminar esta cliente?')) {
+    await fetch(`${API_URL}/agentes/${agenteId}`, {
       method: 'DELETE',
       headers: {
         Authorization: `Bearer ${localStorage.getItem('token')}`,
       },
     });
-    alert('Propiedad eliminada correctamente');
-    window.location.href = '/public/admin/propiedades/';
+    alert('Agente eliminada correctamente');
+    window.location.href = '/public/admin/agentes/';
   }
 }
 
 function volver() {
-  window.location.href = '/public/admin/propiedades/';
+  window.location.href = '/public/admin/agentes/';
 }
 
-function getAgentesFilter() {
-  const agentes = Array.from(
-    document.getElementById('agente').selectedOptions,
-  ).map((option) => option.value);
-  return agentes;
-}
-
-function filtrarPropiedades() {
+function filtrarAgentes() {
   const filters = {
     page: 1,
     pageSize: 10,
-    orderBy: 'propiedadId',
+    orderBy: 'agenteId',
     asc: true,
-    precioDesde: document.getElementById('precioDesde').value,
-    precioHasta: document.getElementById('precioHasta').value,
+    nombre: document.getElementById('nombre').value,
+    telefono: document.getElementById('telefono').value,
     direccion: document.getElementById('direccion').value,
-    tipo: document.getElementById('tipo').value,
-    estado: document.getElementById('estado').value,
-    agenteId: getAgentesFilter(),
   };
   loadProperties(filters);
 }
 
 async function limpiarFiltros() {
-  document.getElementById('precioDesde').value = '';
-  document.getElementById('precioHasta').value = '';
+  document.getElementById('nombre').value = '';
+  document.getElementById('telefono').value = '';
   document.getElementById('direccion').value = '';
-  document.getElementById('tipo').value = '';
-  document.getElementById('estado').value = '';
-  const agentesSelect = document.getElementById('agente');
-  agentesSelect.innerHTML = '';
-  await getAgentes();
-  $('#agente').select2({
-    placeholder: 'Selecciona uno o varios agentes',
-    allowClear: true,
-  });
   loadProperties();
 }
 
 document.addEventListener('DOMContentLoaded', async () => {
-  if (window.location.pathname === '/public/admin/propiedades/') {
+  if (window.location.pathname === '/public/admin/agentes/') {
     await loadProperties();
-    await getAgentes();
-    $('#agente').select2({
-      placeholder: 'Selecciona uno o varios agentes',
-      allowClear: true,
-    });
   } else {
-    await getAgentes();
     const urlParams = new URLSearchParams(window.location.search);
     const id = urlParams.get('id');
     if (id) {
-      propiedadId = id;
+      agenteId = id;
       await loadPropertyDetails(id);
     }
   }
 });
 
-function nuevaPropiedad() {
-  window.location.href = '/public/admin/propiedades/nuevo.html';
+function nuevoAgente() {
+  window.location.href = '/public/admin/agentes/nuevo.html';
 }

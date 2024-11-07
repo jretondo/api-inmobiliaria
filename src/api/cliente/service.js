@@ -53,7 +53,7 @@ exports.getClientes = async (filters) => {
 
   if (nombre) {
     where.push(
-      `(${columns.nombre} LIKE '%${nombre}%' OR ${columns.apellido} LIKE '%${nombre}%')`,
+      `(${CLIENTE.tableName}.${columns.nombre} LIKE '%${nombre}%' OR ${CLIENTE.tableName}.${columns.apellido} LIKE '%${nombre}%')`,
     );
   }
 
@@ -71,9 +71,8 @@ exports.getClientes = async (filters) => {
       Object.values(CLIENTE.columns).map(
         (column) => `${CLIENTE.tableName}.${column}`,
       ),
-      Object.values(IMAGEN.columns).map(
-        (column) => `${IMAGEN.tableName}.${column}`,
-      ),
+      `${IMAGEN.tableName}.${IMAGEN.columns.url}`,
+      `${IMAGEN.tableName}.${IMAGEN.columns.imagenId}`,
     ],
     where,
     page,
@@ -94,9 +93,8 @@ exports.getClienteById = async (id) => {
       Object.values(CLIENTE.columns).map(
         (column) => `${CLIENTE.tableName}.${column}`,
       ),
-      Object.values(IMAGEN.columns).map(
-        (column) => `${IMAGEN.tableName}.${column}`,
-      ),
+      `${IMAGEN.tableName}.${IMAGEN.columns.url}`,
+      `${IMAGEN.tableName}.${IMAGEN.columns.imagenId}`,
     ],
     [`${columns.clienteId} = ${id}`],
     1,

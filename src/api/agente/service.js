@@ -71,9 +71,8 @@ exports.getAgentes = async (filters) => {
       Object.values(AGENTE.columns).map(
         (column) => `${AGENTE.tableName}.${column}`,
       ),
-      Object.values(IMAGEN.columns).map(
-        (column) => `${IMAGEN.tableName}.${column}`,
-      ),
+      `${IMAGEN.tableName}.${IMAGEN.columns.url}`,
+      `${IMAGEN.tableName}.${IMAGEN.columns.imagenId}`,
     ],
     where,
     page,
@@ -94,9 +93,8 @@ exports.getAgenteById = async (id) => {
       Object.values(AGENTE.columns).map(
         (column) => `${AGENTE.tableName}.${column}`,
       ),
-      Object.values(IMAGEN.columns).map(
-        (column) => `${IMAGEN.tableName}.${column}`,
-      ),
+      `${IMAGEN.tableName}.${IMAGEN.columns.url}`,
+      `${IMAGEN.tableName}.${IMAGEN.columns.imagenId}`,
     ],
     [`${columns.agenteId} = ${id}`],
     1,

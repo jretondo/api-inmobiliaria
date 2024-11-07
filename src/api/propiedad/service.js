@@ -120,7 +120,11 @@ exports.getPropiedades = async (filters) => {
     where.push(`${columns.estado} = '${estado}'`);
   }
   if (agenteId) {
-    where.push(`${columns.agenteId} = ${agenteId}`);
+    if (typeof agenteId === 'object') {
+      where.push(`${columns.agenteId} IN (${agenteId.join(', ')})`);
+    } else {
+      where.push(`${columns.agenteId} = ${agenteId}`);
+    }
   }
 
   const Propiedades = await findAll(
