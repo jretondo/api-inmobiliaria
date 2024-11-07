@@ -21,11 +21,12 @@ exports.creator = async (model, data) => {
             body: { err },
           });
         }
+        const insertId = nuevoImagen.body.results.insertId;
         resolve({
           error: false,
           status: 201,
           message: `${tableName} creada con éxito`,
-          body: { results },
+          body: { insertId: [insertId] },
         });
       } catch (error) {
         console.error(error);
@@ -58,11 +59,17 @@ exports.bulkCreator = async (model, data) => {
             body: { err },
           });
         }
+        const affectedRows = results.affectedRows;
+        const insertId = results.insertId;
+        const insertsId = [];
+        for (let i = 0; i < affectedRows; i++) {
+          insertsId.push(insertId + i);
+        }
         resolve({
           error: false,
           status: 201,
           message: `${tableName} creada con éxito`,
-          body: { results },
+          body: { insertId: insertsId },
         });
       } catch (error) {
         console.error(error);

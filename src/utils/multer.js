@@ -10,8 +10,14 @@ const uploadFile = (folderDest, fields) => {
       }
       const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
       req.body.filesName.push({
-        fieldName: file.fieldname,
-        path: path.join(`${uniqueSuffix}-${file.originalname}`),
+        nombre: file.fieldname,
+        url: path.join(
+          'public',
+          'uploads',
+          'images',
+          file.fieldname,
+          `${uniqueSuffix}-${file.originalname}`,
+        ),
       });
       cb(null, `${uniqueSuffix}-${file.originalname}`);
     },

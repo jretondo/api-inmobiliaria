@@ -3,6 +3,7 @@ const connection = require('./src/config/database');
 const propiedadRouter = require('./src/api/propiedad/routes');
 const clienteRouter = require('./src/api/cliente/routes');
 const agenteRouter = require('./src/api/agente/routes');
+const imagenRouter = require('./src/api/imagen/routes');
 const { publicFolders } = require('./src/utils/constants');
 const app = express();
 
@@ -19,7 +20,8 @@ connection.connect((err) => {
 app.use('/api/propiedades', propiedadRouter);
 app.use('/api/clientes', clienteRouter);
 app.use('/api/agentes', agenteRouter);
-app.use('/public', express.static(publicFolders.uploads));
+app.use('/api/imagenes', imagenRouter);
+app.use('/public', express.static(publicFolders.public));
 
 app.use((err, req, res, next) => {
   console.error('Error interno:', err);
