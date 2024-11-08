@@ -79,6 +79,16 @@ npm start
 
 La API debería estar corriendo ahora en http://localhost:3000
 
+### 6. Ingresar al admin:
+
+Para ingresar al panel administrador: http://localhost:3000/public/admin/
+
+E ingrese con sus credenciales
+
+### 7. Ingresar a la SPA con las propiedades (Página Pública):
+
+Para ingresar a la página que de consulta publica: http://localhost:3000/public/inmobiliaria/
+
 ## Comandos Útiles
 
 - **npm run dev**: Ejecuta la API en modo de desarrollo (con hot-reloading).
