@@ -68,7 +68,6 @@ async function showPropertyDetails(propiedadId) {
   document.getElementById('detailPrecio').textContent = property.precio;
   document.getElementById('detailTipo').textContent = property.tipo;
 
-  // Configurar carrusel de imágenes
   const carouselImages = document.getElementById('carouselImages');
   if (property.imagenes.length > 0) {
     carouselImages.innerHTML = property.imagenes
