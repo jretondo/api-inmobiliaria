@@ -76,7 +76,7 @@ Esta acción también crea un usuario Administrador de pruebas. No olvide de com
 ### 5. Iniciar API:
 
 ```
-npm start
+npm run dev
 ```
 
 La API debería estar corriendo ahora en http://localhost:3000

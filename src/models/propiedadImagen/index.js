@@ -14,7 +14,7 @@ const PROPIEDAD_IMAGEN = {
 const createPropiedadImagenTable = async () => {
   const columns = PROPIEDAD_IMAGEN.columns;
   const query = `
-    CREATE TABLE IF NOT EXISTS ${PROPIEDAD_IMAGEN.tablename} (
+    CREATE TABLE IF NOT EXISTS ${PROPIEDAD_IMAGEN.tableName} (
       ${columns.propiedadImagenId} INT AUTO_INCREMENT PRIMARY KEY,
       ${columns.propiedadId} INT NOT NULL,
       ${columns.imagenId} INT NOT NULL,
