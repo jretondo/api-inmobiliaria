@@ -22,4 +22,5 @@ exports.publicFolders = {
     'images',
     'propiedad',
   ),
+  error_404: path.join(__dirname, '..', '..', 'public', 'errors', '404.html'),
 };

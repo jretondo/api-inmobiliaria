@@ -24,10 +24,12 @@ app.use('/api/clientes', clienteRouter);
 app.use('/api/agentes', agenteRouter);
 app.use('/api/imagenes', imagenRouter);
 app.use('/public', express.static(publicFolders.public));
-
 app.use((err, req, res, next) => {
   console.error('Error interno:', err);
   res.status(500).json({ error: 'Error interno del servidor' });
+});
+app.use('*', (req, res) => {
+  res.status(404).sendFile(publicFolders.error_404);
 });
 
 const PORT = process.env.PORT || 3000;
