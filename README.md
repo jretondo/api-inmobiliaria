@@ -39,7 +39,9 @@ Asegúrate de tener MySQL en funcionamiento. Si aún no lo has hecho, sigue esto
 2. Crear base de datos:
 
 ```
-CREATE DATABASE inmobiliaria;
+CREATE DATABASE inmobiliaria
+CHARACTER SET utf8mb4
+COLLATE utf8mb4_spanish_ci;
 ```
 
 #### 3.2. Configurar el archivo .env:
