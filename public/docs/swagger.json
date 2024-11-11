@@ -1,0 +1,758 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "API Inmobiliaria",
+    "version": "1.0.0",
+    "description": "Documentación de la API para el backend."
+  },
+  "servers": [
+    {
+      "url": "http://localhost:3000",
+      "description": "Servidor local"
+    }
+  ],
+  "paths": {
+    "/api/admin/login": {
+      "post": {
+        "summary": "Iniciar Sesión",
+        "description": "Iniciar sesión como administrador.",
+        "tags": ["Administrador"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "usuario": { "type": "string" },
+                  "password": { "type": "string" }
+                },
+                "example": {
+                  "usuario": "admin",
+                  "password": "admin123"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Inicio de sesión exitoso."
+          }
+        }
+      }
+    },
+    "/api/admin/check-token": {
+      "post": {
+        "summary": "Verificar Token",
+        "description": "Verificar si el token de administrador es válido.",
+        "tags": ["Administrador"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "token": { "type": "string" }
+                },
+                "example": {
+                  "token": "eyJ...."
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Inicio de sesión exitoso."
+          }
+        }
+      }
+    },
+    "/api/propiedades": {
+      "post": {
+        "summary": "Nueva Propiedad",
+        "description": "Crear una nueva propiedad.",
+        "tags": ["Propiedades"],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "codigo": { "type": "string" },
+                  "tipo": { "type": "string" },
+                  "direccion": { "type": "string" },
+                  "precio": { "type": "number" },
+                  "descripcion": { "type": "string" },
+                  "estado": { "type": "string" },
+                  "imagenesId": {
+                    "type": "array",
+                    "items": { "type": "integer" }
+                  }
+                },
+                "example": {
+                  "codigo": "P123",
+                  "tipo": "Casa",
+                  "direccion": "Av. Siempre Viva 742",
+                  "precio": 100000,
+                  "descripcion": "Casa espaciosa",
+                  "estado": "disponible",
+                  "imagenesId": [74, 75, 76]
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Propiedad creada exitosamente."
+          }
+        }
+      },
+      "get": {
+        "summary": "Lista de Propiedades",
+        "description": "Obtener lista de propiedades con filtros opcionales.",
+        "tags": ["Propiedades"],
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "schema": { "type": "integer" },
+            "required": true
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "schema": { "type": "integer" }
+          },
+          { "name": "orderBy", "in": "query", "schema": { "type": "string" } },
+          { "name": "asc", "in": "query", "schema": { "type": "boolean" } },
+          {
+            "name": "precioDesde",
+            "in": "query",
+            "schema": { "type": "integer" }
+          },
+          {
+            "name": "precioHasta",
+            "in": "query",
+            "schema": { "type": "integer" }
+          },
+          {
+            "name": "direccion",
+            "in": "query",
+            "schema": { "type": "string" }
+          },
+          { "name": "tipo", "in": "query", "schema": { "type": "string" } },
+          { "name": "estado", "in": "query", "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "Lista paginada de comercios adheridos."
+          }
+        }
+      }
+    },
+    "/api/propiedades/{propiedadId}": {
+      "get": {
+        "summary": "Obtener Propiedad",
+        "description": "Obtener una propiedad por ID.",
+        "tags": ["Propiedades"],
+        "parameters": [
+          {
+            "name": "propiedadId",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "integer" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Detalles de la propiedad obtenidos exitosamente."
+          }
+        }
+      },
+      "put": {
+        "summary": "Modificar Propiedad",
+        "description": "Actualizar una propiedad existente.",
+        "tags": ["Propiedades"],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "propiedadId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "codigo": { "type": "string" },
+                  "tipo": { "type": "string" },
+                  "direccion": { "type": "string" },
+                  "precio": { "type": "number" },
+                  "descripcion": { "type": "string" },
+                  "estado": { "type": "string" },
+                  "imagenesId": {
+                    "type": "array",
+                    "items": { "type": "integer" }
+                  }
+                },
+                "example": {
+                  "codigo": "P123",
+                  "tipo": "Casa",
+                  "direccion": "Av. Siempre Viva 742",
+                  "precio": 100000,
+                  "descripcion": "Casa actualizada",
+                  "estado": "vendida",
+                  "imagenesId": [74, 75, 76]
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Propiedad actualizada exitosamente."
+          },
+          "404": {
+            "description": "Propiedad no encontrada."
+          }
+        }
+      },
+      "delete": {
+        "summary": "Eliminar Propiedad",
+        "description": "Eliminar una propiedad por ID.",
+        "tags": ["Propiedades"],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "propiedadId",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "integer" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Propiedad eliminada exitosamente."
+          }
+        }
+      }
+    },
+    "/api/clientes": {
+      "post": {
+        "summary": "Nuevo Cliente",
+        "description": "Crear un nuevo cliente.",
+        "tags": ["Clientes"],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "nombre": { "type": "string" },
+                  "apellido": { "type": "string" },
+                  "email": { "type": "string", "format": "email" },
+                  "telefono": { "type": "string" },
+                  "direccion": { "type": "string" },
+                  "imagenId": { "type": "integer" }
+                },
+                "example": {
+                  "nombre": "Prueba 2",
+                  "apellido": "Prueba",
+                  "email": "jretondo90@gmail.com",
+                  "telefono": "3512009913",
+                  "direccion": "Av Emilio",
+                  "imagenId": 72
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Cliente creado exitosamente."
+          }
+        }
+      },
+      "get": {
+        "summary": "Lista de Clientes",
+        "description": "Obtener lista de clientes con filtros opcionales.",
+        "tags": ["Clientes"],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "schema": { "type": "integer" },
+            "required": true
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "schema": { "type": "integer" }
+          },
+          { "name": "orderBy", "in": "query", "schema": { "type": "string" } },
+          { "name": "asc", "in": "query", "schema": { "type": "boolean" } },
+          { "name": "nombre", "in": "query", "schema": { "type": "string" } },
+          { "name": "telefono", "in": "query", "schema": { "type": "string" } },
+          { "name": "direccion", "in": "query", "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "Lista de clientes recuperada exitosamente."
+          }
+        }
+      }
+    },
+    "/api/clientes/{clienteId}": {
+      "get": {
+        "summary": "Obtener Cliente",
+        "description": "Obtener un cliente por ID.",
+        "tags": ["Clientes"],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "clienteId",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "integer" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Detalles del cliente obtenidos exitosamente."
+          },
+          "404": {
+            "description": "Cliente no encontrado."
+          }
+        }
+      },
+      "delete": {
+        "summary": "Eliminar Cliente",
+        "description": "Eliminar un cliente por ID.",
+        "tags": ["Clientes"],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "clienteId",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "integer" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Cliente eliminado exitosamente."
+          },
+          "404": {
+            "description": "Cliente no encontrado."
+          }
+        }
+      },
+      "put": {
+        "summary": "Modificar Cliente",
+        "description": "Actualizar un cliente existente.",
+        "tags": ["Clientes"],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "clienteId",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "integer" }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "nombre": { "type": "string" },
+                  "apellido": { "type": "string" },
+                  "email": { "type": "string", "format": "email" },
+                  "telefono": { "type": "string" },
+                  "direccion": { "type": "string" },
+                  "imagenId": { "type": "integer" }
+                },
+                "example": {
+                  "nombre": "Prueba Actualizada",
+                  "apellido": "Prueba",
+                  "email": "jretondo90@gmail.com",
+                  "telefono": "3512009913",
+                  "direccion": "Av Emilio Actualizada",
+                  "imagenId": 72
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Cliente actualizado exitosamente."
+          },
+          "404": {
+            "description": "Cliente no encontrado."
+          }
+        }
+      }
+    },
+    "/api/agentes": {
+      "post": {
+        "summary": "Nuevo Agente",
+        "description": "Crear un nuevo agente.",
+        "tags": ["Agentes"],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "nombre": { "type": "string" },
+                  "apellido": { "type": "string" },
+                  "email": { "type": "string", "format": "email" },
+                  "telefono": { "type": "string" },
+                  "direccion": { "type": "string" },
+                  "imagenId": { "type": "integer" }
+                },
+                "example": {
+                  "nombre": "Belen",
+                  "apellido": "Garcia",
+                  "email": "jretondo90@gmail.com",
+                  "telefono": "3512009913",
+                  "direccion": "Av Emilio",
+                  "imagenId": 6
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Agente creado exitosamente."
+          }
+        }
+      },
+      "get": {
+        "summary": "Lista de Agentes",
+        "description": "Obtener lista de agentes con filtros opcionales.",
+        "tags": ["Agentes"],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "schema": { "type": "integer" },
+            "required": true
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "schema": { "type": "integer" }
+          },
+          { "name": "orderBy", "in": "query", "schema": { "type": "string" } },
+          { "name": "asc", "in": "query", "schema": { "type": "boolean" } },
+          { "name": "nombre", "in": "query", "schema": { "type": "string" } },
+          { "name": "telefono", "in": "query", "schema": { "type": "string" } },
+          { "name": "direccion", "in": "query", "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "Lista de agentes recuperada exitosamente."
+          }
+        }
+      }
+    },
+    "/api/agentes/{agenteId}": {
+      "get": {
+        "summary": "Obtener Agente",
+        "description": "Obtener un agente por ID.",
+        "tags": ["Agentes"],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "agenteId",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "integer" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Detalles del agente obtenidos exitosamente."
+          },
+          "404": {
+            "description": "Agente no encontrado."
+          }
+        }
+      },
+      "delete": {
+        "summary": "Eliminar Agente",
+        "description": "Eliminar un agente por ID.",
+        "tags": ["Agentes"],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "agenteId",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "integer" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Agente eliminado exitosamente."
+          },
+          "404": {
+            "description": "Agente no encontrado."
+          }
+        }
+      },
+      "put": {
+        "summary": "Modificar Agente",
+        "description": "Actualizar un agente existente.",
+        "tags": ["Agentes"],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "agenteId",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "integer" }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "nombre": { "type": "string" },
+                  "apellido": { "type": "string" },
+                  "email": { "type": "string", "format": "email" },
+                  "telefono": { "type": "string" },
+                  "direccion": { "type": "string" },
+                  "imagenId": { "type": "integer" }
+                },
+                "example": {
+                  "nombre": "Belen",
+                  "apellido": "Garcia",
+                  "email": "jretondo90@gmail.com",
+                  "telefono": "3512009913",
+                  "direccion": "Av Emilio",
+                  "imagenId": 6
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Agente actualizado exitosamente."
+          },
+          "404": {
+            "description": "Agente no encontrado."
+          }
+        }
+      }
+    },
+    "/api/imagenes/avatar": {
+      "post": {
+        "summary": "Nuevo Avatar",
+        "description": "Subir un nuevo avatar.",
+        "tags": ["Imagenes"],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "avatar": {
+                    "type": "string",
+                    "format": "binary"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Avatar subido exitosamente."
+          }
+        }
+      }
+    },
+    "/api/imagenes/propiedad": {
+      "post": {
+        "summary": "Nuevas Imágenes de Propiedades",
+        "description": "Subir nuevas imágenes para una propiedad.",
+        "tags": ["Imagenes"],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "propiedad": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "format": "binary"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Imágenes subidas exitosamente."
+          }
+        }
+      }
+    },
+    "/api/imagenes/{imagenId}": {
+      "delete": {
+        "summary": "Eliminar Imagen",
+        "description": "Eliminar una imagen por ID.",
+        "tags": ["Imagenes"],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "imagenId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Imagen eliminada exitosamente."
+          },
+          "404": {
+            "description": "Imagen no encontrada."
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    }
+  },
+  "definitions": {
+    "listResponse": {
+      "type": "object",
+      "properties": {
+        "message": { "type": "string" },
+        "body": {
+          "type": "object",
+          "properties": {
+            "total": { "type": "integer" },
+            "pageSize": { "type": "integer" },
+            "page": { "type": "integer" },
+            "rows": {
+              "type": "array",
+              "items": { "type": "object" }
+            }
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,5 +1,5 @@
 {
-  "watch": ["app.js", "src"],
+  "watch": ["app.js", "src", "public/docs"],
   "ext": "js,json",
   "ignore": ["uploads/*", "node_modules/*"],
   "exec": "node app.js"

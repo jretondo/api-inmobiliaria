@@ -91,6 +91,10 @@ E ingrese con sus credenciales
 
 Para ingresar a la página que de consulta publica: http://localhost:3000/public/inmobiliaria/
 
+### 8. Ingresar a la documentación de la API:
+
+Para ingresar a la documentación de la API: http://localhost:3000/api/docs/
+
 ## Comandos Útiles
 
 - **npm run dev**: Ejecuta la API en modo de desarrollo (con hot-reloading).
